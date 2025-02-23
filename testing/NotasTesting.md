@@ -30,6 +30,7 @@ En caso de querer ver el archivo de cobertura de CPU o memoria, se puede usar el
 - Se usa el comando `top` para ver el top 10 de funciones que consumen mas CPU
 - Se usa el comando `list <funcion>` para ver el codigo de la funcion e indicar que linea ocupa mas tiempo
 - Se usa el comando `web` para ver el codigo de la funcion en formato html.
+- Se usa el comando `pdf` para ver el codigo de la funcion en formato pdf.
 
 
 ### ***Requerimientos***
