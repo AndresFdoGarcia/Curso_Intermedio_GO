@@ -1,6 +1,6 @@
 # 📡 Channels
 
-Los canales son una forma de comunicación entre goRoutines. Existen dos tipos de canales:
+Los canales son una forma de comunicación entre goRoutins. Existen dos tipos de canales:
 
 - `unbuffered`: No tienen capacidad para almacenar mensajes. Por lo tanto, la goRoutine que envía el mensaje debe esperar a que la goRoutine que recibe el mensaje esté lista para recibirlo. Estará <strong>bloqueada</strong> hasta que se reciba el mensaje.
 - `buffered`: Tienen una capacidad para almacenar mensajes. Se puede especificar la capacidad al crear el canal, esto como segundo argumento en la función `make`.
@@ -66,4 +66,33 @@ go func() {
 wg.Wait()
 ```
 
+# 📦 Pipelines
+
+Es una forma de comunicación entre goRoutins que se basa en la idea de que una goRoutine produce datos y otra los consume.
+
+Es importante que el canal no se cierre, ya que si lo hace, la goRoutine que lo está consumiendo se quedará esperando a que se le envíen más datos. Además la goRutin que consume debe cerrar el canal de salida y no asignarle un nuevo valor al canal de entrada.
+
+Para evitar el problema se puede definir un canal de salida y un canal de entrada.
+
+- Canal de salida (Escritura): `chan<-` 
+- Canal de entrada (Lectura): `<-chan` 
+
+
+En ***Generator*** se declara el canal `c` como solo escritura `chan<-`.
+```go
+func Generator(c chan<- int) {
+	for i := 1; i <= 10; i++ {
+		c <- i
+	}
+}
+```
+
+En ***Double*** se declara el canal `in` como solo lectura `<-chan` y el canal `out` como solo escritura `chan<-`.
+```go
+func Double(in <-chan int, out chan<- int) {
+	for value := range in {
+		out <- value * 2
+	}
+}
+```
 
