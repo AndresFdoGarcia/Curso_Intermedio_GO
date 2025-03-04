@@ -6,14 +6,14 @@ Los canales son una forma de comunicación entre goRoutins. Existen dos tipos de
 - `buffered`: Tienen una capacidad para almacenar mensajes. Se puede especificar la capacidad al crear el canal, esto como segundo argumento en la función `make`.
 
 
-## 📝 Declaración
+### 📝 Declaración
 
 ```go
 c := make(chan int) // unbuffered
 c := make(chan int, 10) // buffered
 ``` 
 
-## 📤 Enviar y recibir mensajes
+### 📤 Enviar y recibir mensajes
 
 ```go
 c <- 1 // enviar
@@ -21,7 +21,7 @@ c <- 1 // enviar
 fmt.Println(<-c) // recibir 
 ```
 
-## 🔒 Buffered channels como Semáforos
+### 🔒 Buffered channels como Semáforos
 
 Los canales buffered se pueden usar como semáforos.
 
@@ -96,3 +96,32 @@ func Double(in <-chan int, out chan<- int) {
 }
 ```
 
+# 🧰 Worker Pools
+
+Es una forma de ejecutar varias goRoutins de manera concurrente. 
+
+### ⚙️ Componentes del Worker Pool
+
+- ***Cola de Trabajos:*** Un canal que contiene los trabajos a procesar. Actúa como una cola de la cual las goRoutins trabajadoras obtienen tareas.
+```go
+jobs := make(chan int, len(tasks))
+```	
+- ***goRoutins Trabajadoras:*** Un número fijo de goRoutins que escuchan continuamente nuevos trabajos en la cola de trabajos y los procesan. (`z` es el id de la goRoutin trabajadora)
+```go
+go Worker(z, jobs, results)
+```
+- ***Recolector de Resultados:*** Un componente opcional, frecuentemente otra gorutina, responsable de recolectar y procesar los resultados producidos por los trabajadores.
+```go
+results := make(chan int, len(tasks))
+```
+- ***Despachador:*** Coordina la distribución de trabajos al grupo de trabajadores y gestiona el ciclo de vida del pool, incluyendo la sincronización y el cierre.
+```go
+for _, value := range tasks {
+	jobs <- value
+}
+close(jobs)
+```
+- ***Mecanismo de Sincronización:*** Herramientas como sync.WaitGroup se utilizan para sincronizar la finalización de tareas, asegurando que el programa principal espere a que todas las tareas sean procesadas antes de terminar.
+```go
+wg.Wait()
+```
