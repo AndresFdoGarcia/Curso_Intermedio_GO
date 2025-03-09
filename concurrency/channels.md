@@ -125,3 +125,17 @@ close(jobs)
 ```go
 wg.Wait()
 ```
+
+# 🔄 Multiplecación con SELECT y CASE
+
+Cuando una goRutin se está ejecutando, puede estar esperando a que un canal reciba un mensaje. El `select` es una construcción que permite a una goRoutine esperar múltiples canales de manera concurrente y ordenada.
+
+```go
+select {
+	case channelMsg1 := <-c1:
+		fmt.Println(channelMsg1)
+	case channelMsg2 := <-c2:
+		fmt.Println(channelMsg2)
+}
+```
+
